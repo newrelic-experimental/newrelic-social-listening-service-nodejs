@@ -1,7 +1,7 @@
 console.log('Hello World!');
 
 const test = (test) => {
-  const alpha = 'abcd';
+  const alpha = 'abc';
   return alpha;
 };
 
