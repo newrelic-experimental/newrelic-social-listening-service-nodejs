@@ -1,0 +1,56 @@
+{
+  "name": "newrelic-social-listening-service-nodejs",
+  "version": "0.0.1",
+  "description": "Social media platform sentiment listening service",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "nodemon",
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node build/index.js",
+    "lint": "eslint '*/**/*.{js,ts}'",
+    "lint:fix": "eslint '*/**/*.{js,ts}' --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs.git"
+  },
+  "keywords": [
+    "social",
+    "media",
+    "sentiment",
+    "listening",
+    "service"
+  ],
+  "author": "Mat Wilk",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs/issues"
+  },
+  "homepage": "https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs#readme",
+  "devDependencies": {
+    "@types/node": "^14.0.23",
+    "@typescript-eslint/eslint-plugin": "^3.6.0",
+    "@typescript-eslint/parser": "^3.6.0",
+    "eslint": "^7.4.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts}": [
+      "eslint --fix"
+    ]
+  }
+}
