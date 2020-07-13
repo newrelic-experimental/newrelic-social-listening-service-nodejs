@@ -1,6 +1,4 @@
-console.log('Hello World!');
-
-const test = (test) => {
+const test = (): string => {
   const alpha = 'abc';
   return alpha;
 };
