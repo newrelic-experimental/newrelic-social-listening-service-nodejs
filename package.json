@@ -11,7 +11,7 @@
     "lint:fix": "eslint '*/**/*.{js,ts}' --fix",
     "prettier": "prettier --config .prettierrc.js 'src/**/*.{js,ts}'",
     "prettier:fix": "prettier --config .prettierrc.js 'src/**/*.{js,ts}' --write",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,15 @@
     "url": "https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs/issues"
   },
   "homepage": "https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0"
+  },
   "devDependencies": {
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@babel/register": "^7.10.4",
+    "@types/dotenv": "^8.2.0",
+    "@types/jest": "^26.0.4",
     "@types/node": "^14.0.23",
     "@typescript-eslint/eslint-plugin": "^3.6.0",
     "@typescript-eslint/parser": "^3.6.0",
@@ -38,6 +46,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "husky": "^4.2.5",
+    "jest": "^26.1.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
@@ -48,5 +57,10 @@
     "hooks": {
       "pre-commit": "npm run prettier && npm run lint"
     }
+  },
+  "jest": {
+    "setupFiles": [
+      "dotenv/config"
+    ]
   }
 }

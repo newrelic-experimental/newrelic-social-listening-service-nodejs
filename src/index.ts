@@ -1,6 +1,5 @@
-const test = (): string => {
-  const alpha = 'abc';
-  return alpha;
+const main = (): string => {
+  return 'abc';
 };
 
-export default test;
+export default main;
