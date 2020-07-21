@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "esnext",
     "module": "commonjs",
+    "moduleResolution": "node",
     "lib": ["es6"],
     "allowJs": true,
     "outDir": "build",
@@ -12,7 +13,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "exclude": [
-    "node_modules"
+  "include": [
+    "./src/**/*"
   ]
 }
