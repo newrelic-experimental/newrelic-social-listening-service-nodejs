@@ -9,8 +9,8 @@
     "start": "npm run build && node build/server.js",
     "lint": "eslint '*/**/*.{js,ts}'",
     "lint:fix": "eslint '*/**/*.{js,ts}' --fix",
-    "prettier": "prettier --config .prettierrc.js 'src/**/*.{js,ts}' --check",
-    "prettier:fix": "prettier --config .prettierrc.js 'src/**/*.{js,ts}' --write",
+    "prettier": "prettier --config .prettierrc.js 'app/**/*.{js,ts}' --check",
+    "prettier:fix": "prettier --config .prettierrc.js 'app/**/*.{js,ts}' --write",
     "test": "jest --verbose"
   },
   "repository": {

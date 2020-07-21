@@ -6,7 +6,7 @@
     "lib": ["es6"],
     "allowJs": true,
     "outDir": "build",
-    "rootDir": "src",
+    "rootDir": "app",
     "strict": true,
     "sourceMap": true,
     "noImplicitAny": true,
@@ -14,6 +14,6 @@
     "resolveJsonModule": true
   },
   "include": [
-    "./src/**/*"
+    "./app/**/*"
   ]
 }
