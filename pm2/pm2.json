@@ -1,0 +1,11 @@
+{
+  "apps": [
+    {
+      "name":"SLS",
+      "script": "./build/server.js",
+      "instances": "1",
+      "exec_mode": "cluster",
+      "node_args": "-r dotenv/config"
+    }
+  ]
+}
