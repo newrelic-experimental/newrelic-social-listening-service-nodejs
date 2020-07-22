@@ -2,5 +2,7 @@
   "watch": ["app"],
   "ext": ".ts,.js",
   "ignore": [],
-  "exec": "ts-node ./app/server.ts"
+  "execMap": {
+    "ts": "node --require ts-node/register"
+  }
 }

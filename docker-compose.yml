@@ -2,11 +2,12 @@ version: "3.3"
 services:
   app:
     build: .
-    command: pm2-dev ./build/server.js
+    command: npm run start:dev
     environment:
       NODE_ENV: development
     ports:
-    - "3000:3000"
+      - "3000:3000"
+      - "9229:9229"
     volumes:
-    - .:/home/nodejs/app
-    - ./node_modules:/home/nodejs/node_modules
+      - .:/home/nodejs
+      - ./node_modules:/home/nodejs/node_modules
