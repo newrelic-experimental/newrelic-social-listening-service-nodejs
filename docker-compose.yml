@@ -1,4 +1,4 @@
-version: "3.3"
+version: '3.3'
 services:
   app:
     build: .
@@ -6,8 +6,8 @@ services:
     environment:
       NODE_ENV: development
     ports:
-      - "3000:3000"
-      - "9229:9229"
+      - '3000:3000'
+      - '9229:9229'
     volumes:
       - .:/home/nodejs
       - ./node_modules:/home/nodejs/node_modules
