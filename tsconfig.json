@@ -11,6 +11,7 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
+    "noImplicitReturns": true,
     "resolveJsonModule": true
   },
   "include": [
