@@ -1,10 +1,11 @@
 import app from './app';
 import supertest from 'supertest';
 
+const request = supertest(app);
+
 describe('App Integration', () => {
   describe('GET /listener', () => {
     it('returns OK', async () => {
-      const request = supertest(app);
       const response = await request.get('/listener');
 
       expect(response.status).toBe(200);
@@ -16,7 +17,6 @@ describe('App Integration', () => {
     describe('Error', () => {
       describe('bodyParserHandler', () => {
         it('returns error when JSON payload is malformed', async () => {
-          const request = supertest(app);
           const response = await request
             .post('/listener')
             .type('json')
@@ -30,7 +30,6 @@ describe('App Integration', () => {
 
       describe('404', () => {
         it('returns error if no resource if found', async () => {
-          const request = supertest(app);
           const response = await request.get('/abc');
 
           expect(response.status).toBe(404);
@@ -42,7 +41,6 @@ describe('App Integration', () => {
 
       describe('405', () => {
         it('returns error if method is not allowed', async () => {
-          const request = supertest(app);
           const response = await request.post('/abc');
 
           expect(response.status).toBe(405);
