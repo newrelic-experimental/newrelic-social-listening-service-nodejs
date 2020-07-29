@@ -28,14 +28,14 @@ const fourOFour = (req: Request, res: Response, next: NextFunction): void =>
     ),
   );
 
-const fourOFive = (req: Request, res: Response, next: NextFunction): void => {
-  const err = new ApiError(
-    405,
-    'Method Not Allowed',
-    `${req.method} is not supported at ${req.path}`,
+const fourOFive = (req: Request, res: Response, next: NextFunction): void =>
+  next(
+    new ApiError(
+      405,
+      'Method Not Allowed',
+      `${req.method} is not supported at ${req.path}`,
+    ),
   );
-  return next(err);
-};
 
 const globalErrorHandler = (
   err: ResponseError,

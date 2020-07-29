@@ -13,7 +13,7 @@
     "lint:fix": "eslint '*/**/*.{js,ts}' --fix",
     "prettier": "prettier --config .prettierrc.js 'app/**/*.{js,ts}' --check",
     "prettier:fix": "prettier --config .prettierrc.js 'app/**/*.{js,ts}' --write",
-    "test": "jest --verbose"
+    "test": "jest --verbose --coverage"
   },
   "repository": {
     "type": "git",
