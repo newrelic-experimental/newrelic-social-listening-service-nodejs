@@ -1,4 +1,4 @@
-import { serverInstance } from './server';
+import { serverInstance } from './container';
 import supertest from 'supertest';
 
 const request = supertest(serverInstance);
