@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["es6"],
+    "lib": ["ES2019"],
     "allowJs": true,
     "outDir": "build",
     "rootDir": "app",
@@ -12,7 +12,10 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "noImplicitReturns": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["reflect-metadata", "jest"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "./app/**/*"

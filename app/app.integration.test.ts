@@ -1,7 +1,7 @@
-import app from './app';
+import { serverInstance } from './container';
 import supertest from 'supertest';
 
-const request = supertest(app);
+const request = supertest(serverInstance);
 
 describe('App Integration', () => {
   describe('GET /listener', () => {
