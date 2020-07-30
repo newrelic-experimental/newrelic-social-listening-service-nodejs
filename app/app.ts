@@ -8,7 +8,7 @@ import {
   globalErrorHandler,
 } from './handlers/error';
 
-const app = (app: Application) => {
+const app = (app: Application): void => {
   // body parser setup
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json({ type: '*/*' }));
@@ -18,7 +18,7 @@ const app = (app: Application) => {
   app.use(globalResponseHeaders);
 };
 
-const error = (app: Application) => {
+const error = (app: Application): void => {
   // catch 404 "Not Found" errors
   app.get('*', fourOFour);
   // catch 405 "Method Not Allowed" errors
