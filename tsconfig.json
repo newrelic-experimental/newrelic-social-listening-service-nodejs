@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "target": "ES2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "lib": ["es6"],
+    "lib": ["ES2019"],
     "allowJs": true,
     "outDir": "build",
     "rootDir": "app",

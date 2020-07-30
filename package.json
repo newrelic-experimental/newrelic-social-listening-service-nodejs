@@ -72,13 +72,5 @@
       "pre-commit": "npm run prettier && npm run lint",
       "pre-push": "npx branch-name-lint branchlint.json"
     }
-  },
-  "jest": {
-    "setupFiles": [
-      "dotenv/config"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    }
   }
 }
