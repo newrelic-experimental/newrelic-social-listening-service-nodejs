@@ -15,18 +15,9 @@
       "fix": "hotfix",
       "releases": "release"
     },
-    "banned": [
-      "wip"
-    ],
-    "skip": [
-      "skip-ci"
-    ],
-    "disallowed": [
-      "main",
-      "master",
-      "develop",
-      "staging"
-    ],
+    "banned": ["wip"],
+    "skip": ["skip-ci"],
+    "disallowed": ["main", "master", "develop", "staging"],
     "seperator": "/",
     "msgBranchBanned": "Branches with the name \"%s\" are not allowed.",
     "msgBranchDisallowed": "Pushing to \"%s\" is not allowed, use git-flow.",
