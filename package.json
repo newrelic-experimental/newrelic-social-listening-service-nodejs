@@ -34,7 +34,10 @@
   "homepage": "https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs#readme",
   "dependencies": {
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "inversify": "^5.0.1",
+    "inversify-express-utils": "^6.3.2",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.10.4",

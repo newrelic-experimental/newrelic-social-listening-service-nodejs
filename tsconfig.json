@@ -12,7 +12,10 @@
     "noImplicitAny": true,
     "esModuleInterop": true,
     "noImplicitReturns": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["reflect-metadata", "jest"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "./app/**/*"
