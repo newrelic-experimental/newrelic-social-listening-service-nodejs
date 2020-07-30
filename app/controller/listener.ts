@@ -4,10 +4,10 @@ type JsonResponse = {
   message: string;
 };
 
-@controller('/')
+@controller('/listener')
 export class ListenerController {
   @httpGet('/')
   public get(): JsonResponse {
-    return { message: 'OK From Controller' };
+    return { message: 'OK' };
   }
 }

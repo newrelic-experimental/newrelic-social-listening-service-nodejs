@@ -16,7 +16,7 @@ const server = new InversifyExpressServer(container);
 server.setConfig(app);
 server.setErrorConfig(error);
 
-const serverInstance = server.build();
+export const serverInstance = server.build();
 
 serverInstance.listen(PORT, () => {
   console.log(

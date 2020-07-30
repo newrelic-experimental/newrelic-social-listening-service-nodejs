@@ -16,11 +16,6 @@ const app = (app: Application) => {
 
   // response headers setup; CORS
   app.use(globalResponseHeaders);
-
-  // // routes go here
-  // app.use('/listener', (req: Request, res: Response) => {
-  //   res.send({ message: 'OK' });
-  // });
 };
 
 const error = (app: Application) => {
