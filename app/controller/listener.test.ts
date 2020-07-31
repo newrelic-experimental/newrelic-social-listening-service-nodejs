@@ -3,7 +3,7 @@ import {
   ISentimentRequest,
   ISentimentResponse,
 } from '../service/sentimentAnalysis';
-import {Request} from 'express';
+import { Request } from 'express';
 
 class SentimentAnalysisServiceMock {
   public getSentiment(body: ISentimentRequest): ISentimentResponse {

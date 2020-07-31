@@ -11,7 +11,6 @@ export interface ISentimentResponse {
 
 @injectable()
 export class SentimentAnalysisService {
-
   public getSentiment(body: ISentimentRequest): ISentimentResponse {
     return {
       text: body.text,

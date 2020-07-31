@@ -1,5 +1,5 @@
 const TYPES = {
-  SentimentAnalysisService: Symbol.for('SentimentAnalysisService')
+  SentimentAnalysisService: Symbol.for('SentimentAnalysisService'),
 };
 
 export default TYPES;
