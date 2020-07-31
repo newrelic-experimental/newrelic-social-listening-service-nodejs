@@ -11,6 +11,17 @@ describe('App Integration', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual({ message: 'OK' });
     });
+
+    describe('GET /listener/sentiment', () => {
+      it('returns weight of sentiment of given text', async () => {
+        const response = await request
+          .post('/listener/sentiment')
+          .send({ text: 'test' });
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({ text: 'test', sentiment: 3 });
+      });
+    });
   });
 
   describe('Handlers', () => {
