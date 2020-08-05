@@ -15,9 +15,11 @@
     "resolveJsonModule": true,
     "types": ["reflect-metadata", "jest"],
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": true
   },
   "include": [
+    "decs.d.ts",
     "./app/**/*"
   ]
 }
