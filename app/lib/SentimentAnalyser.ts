@@ -1,3 +1,4 @@
+import { injectable } from 'inversify';
 // @ts-ignore
 import natural, { WordTokenizer, SentimentAnalyzer } from 'natural';
 import aposToLexForm from 'apos-to-lex-form';
@@ -5,6 +6,7 @@ import SpellCorrector from 'spelling-corrector';
 import stopword from 'stopword';
 import { pipe } from 'ramda';
 
+@injectable()
 export class SentimentAnalyser {
   private tokenizer: WordTokenizer;
   private analyzer: SentimentAnalyzer;

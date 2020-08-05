@@ -19,7 +19,7 @@ describe('App Integration', () => {
           .send({ text: 'test' });
 
         expect(response.status).toBe(200);
-        expect(response.body).toEqual({ text: 'test', sentiment: 3 });
+        expect(response.body).toEqual({ text: 'test', sentiment: 0 });
       });
     });
   });

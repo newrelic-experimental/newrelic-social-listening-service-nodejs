@@ -19,7 +19,7 @@
     "strictPropertyInitialization": true
   },
   "include": [
-    "decs.d.ts",
+    "./@types/global/index.d.ts",
     "./app/**/*"
   ]
 }

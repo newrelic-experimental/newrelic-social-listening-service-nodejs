@@ -1,10 +1,18 @@
 import { SentimentAnalysisService } from './sentimentAnalysis';
+import { SentimentAnalyser } from '../lib/SentimentAnalyser';
 
-describe('SentimentAnalysisSercice', () => {
+class SentimentAnalyserMock {
+  analyse = (text: string) => 3;
+}
+
+describe('SentimentAnalysisService', () => {
   let service: SentimentAnalysisService;
 
   beforeEach(() => {
-    service = new SentimentAnalysisService();
+    const sentimentAnalyser = new SentimentAnalyserMock();
+    service = new SentimentAnalysisService(
+      sentimentAnalyser as SentimentAnalyser,
+    );
   });
 
   it('returns sentiment of given text', () => {

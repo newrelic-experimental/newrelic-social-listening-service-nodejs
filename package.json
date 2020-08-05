@@ -4,7 +4,7 @@
   "description": "Social media platform sentiment listening service",
   "main": "index.js",
   "scripts": {
-    "start:dev": "nodemon --inspect=0.0.0.0 ./app/server.ts",
+    "start:dev": "ts-node --files ./app/server.ts",
     "docker:dev:start": "docker-compose up --build",
     "docker:dev:stop": "docker-compose down",
     "build": "rimraf ./build && tsc",
