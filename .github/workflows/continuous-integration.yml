@@ -25,4 +25,5 @@ jobs:
       - run: npm ci
       - run: npm run test
         env:
-          REGION: 'local'
+          NATURAL_LANGUAGE: 'English'
+          NATURAL_VOCABULARY: 'afinn'
