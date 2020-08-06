@@ -1,5 +1,5 @@
 module.exports = {
-  setupFiles: ['dotenv/config', './jest-setup-file.ts'],
+  setupFiles: ['./jest-setup-file.ts', 'dotenv/config'],
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
