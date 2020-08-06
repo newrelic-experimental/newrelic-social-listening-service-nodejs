@@ -16,7 +16,11 @@ export class SentimentAnalyser {
     // @ts-ignore
     const { WordTokenizer, PorterStemmer, SentimentAnalyzer } = natural;
     this.tokenizer = new WordTokenizer();
-    this.analyzer = new SentimentAnalyzer('English', PorterStemmer, 'afinn');
+    this.analyzer = new SentimentAnalyzer(
+      process.env.NATURAL_LANGUAGE,
+      PorterStemmer,
+      process.env.NATURAL_VOCABULARY,
+    );
     this.corrector = new SpellCorrector();
     this.corrector.loadDictionary();
   }
@@ -54,7 +58,7 @@ export class SentimentAnalyser {
     return this.analyzer.getSentiment(text);
   };
 
-  public analyse = (text: string) => {
+  public analyse = (text: string): number => {
     return pipe(
       this.aposToLex,
       this.toLowerCase,
