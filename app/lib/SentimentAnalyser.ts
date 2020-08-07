@@ -1,29 +1,18 @@
-import { injectable } from 'inversify';
-// @ts-ignore
-import natural, { WordTokenizer, SentimentAnalyzer } from 'natural';
-import aposToLexForm from 'apos-to-lex-form';
-import SpellCorrector from 'spelling-corrector';
-import stopword from 'stopword';
+import { injectable, inject } from 'inversify';
 import { pipe } from 'ramda';
+import aposToLexForm from 'apos-to-lex-form';
+import stopword from 'stopword';
+import TYPES from '../constant/types';
+import { Natural } from './Natural';
+import { SpellCorrectorFactory } from './SpellCorrector';
 
 @injectable()
 export class SentimentAnalyser {
-  private tokenizer: WordTokenizer;
-  private analyzer: SentimentAnalyzer;
-  private corrector: any;
-
-  constructor() {
-    // @ts-ignore
-    const { WordTokenizer, PorterStemmer, SentimentAnalyzer } = natural;
-    this.tokenizer = new WordTokenizer();
-    this.analyzer = new SentimentAnalyzer(
-      process.env.NATURAL_LANGUAGE,
-      PorterStemmer,
-      process.env.NATURAL_VOCABULARY,
-    );
-    this.corrector = new SpellCorrector();
-    this.corrector.loadDictionary();
-  }
+  corrector: any;
+  constructor(
+    @inject(TYPES.Natural) private natural: Natural,
+    @inject(TYPES.SpellCorrector) private spellCorrector: SpellCorrectorFactory,
+  ) {}
   // convert contractions
   private aposToLex = (text: string): string => {
     return aposToLexForm(text);
@@ -40,12 +29,12 @@ export class SentimentAnalyser {
 
   // split text into units (tokens)
   private tokenize = (text: string): string[] => {
-    return this.tokenizer.tokenize(text);
+    return this.natural.tokenize(text);
   };
 
   // correct misspelled words
   private spellCorrect = (tokenized: string[]): string[] => {
-    return tokenized.map((token: string) => this.corrector.correct(token));
+    return tokenized.map((token: string) => this.spellCorrector.correct(token));
   };
 
   // remove stop words (stop words have no effect on user's sentiment)
@@ -54,8 +43,8 @@ export class SentimentAnalyser {
     return stopword.removeStopwords(tokenized);
   };
 
-  private process = (text: string[]) => {
-    return this.analyzer.getSentiment(text);
+  private process = (tokenized: string[]) => {
+    return this.natural.getSentiment(tokenized);
   };
 
   public analyse = (text: string): number => {

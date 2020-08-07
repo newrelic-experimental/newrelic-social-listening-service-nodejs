@@ -1,10 +1,13 @@
 import { SentimentAnalyser } from './SentimentAnalyser';
+import { Natural } from './Natural';
+import { SpellCorrectorFactory } from './SpellCorrector';
 
 describe('SentimentAnalyser', () => {
   let analyser: SentimentAnalyser;
 
   beforeEach(() => {
-    analyser = new SentimentAnalyser();
+    const spellCorrector = new SpellCorrectorFactory();
+    analyser = new SentimentAnalyser(new Natural(), spellCorrector);
   });
 
   it('should return positive sentiment', () => {
