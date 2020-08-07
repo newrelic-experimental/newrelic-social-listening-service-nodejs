@@ -9,10 +9,10 @@ import { app, error } from './app';
 import { SentimentAnalysisService } from './service/sentimentAnalysis';
 import { SentimentAnalyser } from './lib/SentimentAnalyser';
 import { Natural } from './lib/Natural';
+import { SpellCorrectorFactory } from './lib/SpellCorrector';
 import TYPES from './constant/types';
 
 import './controller/listener';
-import { SpellCorrectorFactory } from './lib/SpellCorrector';
 
 const container = new Container();
 container
