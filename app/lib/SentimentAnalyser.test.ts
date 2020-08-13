@@ -10,14 +10,14 @@ describe('SentimentAnalyser', () => {
     analyser = new SentimentAnalyser(new Natural(), spellCorrector);
   });
 
-  it('should return positive sentiment', () => {
+  it('returns positive sentiment', () => {
     const text = 'I am very happy, so so happy!';
     const result = analyser.analyse(text);
 
     expect(result).toBeGreaterThan(1);
   });
 
-  it('should return negative sentiment', () => {
+  it('returns negative sentiment', () => {
     const text = 'I am extremely sad!';
     const result = analyser.analyse(text);
 
