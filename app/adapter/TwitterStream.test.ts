@@ -1,54 +1,92 @@
 import { TwitterStreamAdapter } from './TwitterStream';
-import { PassThrough } from 'stream';
 import nock from 'nock';
+import { ReadableStream } from 'needle';
 
 describe('TwitterAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
+  let host: string;
+  let path: string;
 
-  beforeEach(() => (twitterStreamAdapter = new TwitterStreamAdapter()));
+  beforeEach(() => {
+    host = 'https://api.twitter.com';
+    path = '/2/tweets/search/stream';
+    twitterStreamAdapter = new TwitterStreamAdapter();
+  });
 
-  it('returns 200 when a rule is set successfully');
+  afterEach(() => {
+    nock.cleanAll();
+  });
 
-  it('throws an error when a rule set failed');
+  it.todo('returns 200 when a rule is set successfully');
 
-  it('returns all the rules');
+  it.todo('throws an error when a rule set failed');
 
-  it('deletes a rule');
+  it.todo('returns all the rules');
 
-  it('deletes all the rules');
+  it.todo('deletes a rule');
 
-  it('connects to filtered stream and returns stream', () => {
-    const host = 'https://api.twitter.com';
-    const path = '/2/tweets/search/stream';
-    const mockedStream = new PassThrough();
+  it.todo('deletes all the rules');
+
+  it.todo('connects to filtered stream and returns stream');
+
+  it('handles stream data event', async (done) => {
+    const mockedResponse = { message: 'hello from nock' };
+
     nock(host, {
       reqheaders: {
         authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
       },
     })
       .get(path)
-      .delay(2000)
-      .reply(200, () => {
-        return JSON.stringify({ message: 'OK' });
-      });
+      .reply(200, () => mockedResponse);
 
     twitterStreamAdapter.startStream();
+    const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
 
-    mockedStream.emit('data', 'hello world');
+    jest.spyOn(JSON, 'parse');
 
-    expect(twitterStreamAdapter.stream).toEqual(mockedStream);
-
-    mockedStream.end();
-    mockedStream.destroy();
+    stream!.on('data', () => {
+      expect(JSON.parse).toHaveBeenCalledWith({ message: 'hello from nock' });
+      done();
+    });
   });
 
-  it('throws an error when connecting to a stream without defined rules');
+  it('handles stream error timeout event', async (done) => {
+    nock(host, {
+      reqheaders: {
+        authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+      },
+    })
+      .get(path)
+      .replyWithError({ code: 'ETIMEDOUT' });
 
-  it('handles stream data event');
+    twitterStreamAdapter.startStream();
+    const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+    // @ts-ignore
+    const emitSpy = jest.spyOn(stream, 'emit');
 
-  it('handles stream timeout event');
+    stream!.on('done', () => {
+      expect(emitSpy).toHaveBeenCalledWith('timeout');
+      done();
+    });
+  });
 
-  it('handles stream error event');
+  it('disconnects from filtered stream', () => {
+    nock(host, {
+      reqheaders: {
+        authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+      },
+    })
+      .get(path)
+      .replyWithError({ code: 'ETIMEDOUT' });
 
-  it('disconnects from filtered stream');
+    twitterStreamAdapter.startStream();
+    const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+    // @ts-ignore
+    const emitSpy = jest.spyOn(stream, 'emit');
+
+    twitterStreamAdapter.stopStream();
+
+    expect(emitSpy).toHaveBeenCalledWith('close');
+  });
 });

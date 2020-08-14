@@ -20,8 +20,8 @@ export class TwitterStreamAdapter {
           // Keep alive signal received. Do nothing.
         }
       })
-      .on('error', (error) => {
-        if (error.code === 'ETIMEDOUT') {
+      .on('done', (error) => {
+        if (error && error.code === 'ETIMEDOUT') {
           this.stream?.emit('timeout');
         }
       });
