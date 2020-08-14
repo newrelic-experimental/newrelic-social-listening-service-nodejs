@@ -57,6 +57,7 @@
     "@types/jest": "^26.0.4",
     "@types/natural": "^0.6.3",
     "@types/needle": "^2.0.4",
+    "@types/nock": "^11.1.0",
     "@types/node": "^14.0.23",
     "@types/ramda": "^0.27.14",
     "@types/stopword": "^0.3.0",

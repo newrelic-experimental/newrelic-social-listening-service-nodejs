@@ -6,7 +6,7 @@ describe('TwitterAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
   let host: string;
   let path: string;
-  let nockScope: any;
+  let nockScope: nock.Interceptor;
 
   jest.useFakeTimers();
 
@@ -50,7 +50,7 @@ describe('TwitterAdapter', () => {
 
     jest.spyOn(JSON, 'parse');
 
-    stream!.on('data', () => {
+    stream?.on('data', () => {
       expect(JSON.parse).toHaveBeenCalledWith({ message: 'hello from nock' });
       done();
     });
@@ -64,7 +64,7 @@ describe('TwitterAdapter', () => {
     // @ts-ignore
     const emitSpy = jest.spyOn(stream, 'emit');
 
-    stream!.on('err', () => {
+    stream?.on('err', () => {
       expect(emitSpy).toHaveBeenCalledWith('timeout');
       done();
     });
