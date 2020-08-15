@@ -5,20 +5,22 @@ import { ReadableStream } from 'needle';
 describe('TwitterAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
   let host: string;
-  let path: string;
-  let nockScope: nock.Interceptor;
+  let streamPath: string;
+  let rulesPath: string;
+  let nockStreamScope: nock.Interceptor;
+  let options: nock.Options;
+  let bearer: string;
 
   jest.useFakeTimers();
 
   beforeEach(() => {
     host = 'https://api.twitter.com';
-    path = '/2/tweets/search/stream';
+    streamPath = '/2/tweets/search/stream';
+    rulesPath = '/2/tweets/search/stream/rules';
+    bearer = `Bearer ${process.env.TWITTER_BEARER_TOKEN}`;
+    options = { reqheaders: { authorization: bearer } };
 
-    nockScope = nock(host, {
-      reqheaders: {
-        authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
-      },
-    }).get(path);
+    nockStreamScope = nock(host, options).get(streamPath);
 
     twitterStreamAdapter = new TwitterStreamAdapter();
   });
@@ -28,7 +30,41 @@ describe('TwitterAdapter', () => {
     jest.clearAllMocks();
   });
 
-  it.todo('returns 200 when a rule is set successfully');
+  it('returns 201 when rules are added successfully', async () => {
+    const requestJson = {
+      add: [
+        {
+          value: 'kittens',
+          tag: 'cats with images',
+        },
+      ],
+    };
+    const responseJson = {
+      data: [
+        {
+          value: 'kittens',
+          tag: 'cats with images',
+          id: '1294596265720926208',
+        },
+      ],
+      meta: {
+        sent: '2020-08-15T11:26:17.865Z',
+        summary: {
+          created: 1,
+          not_created: 0,
+          valid: 1,
+          invalid: 0,
+        },
+      },
+    };
+    nock(host, options).post(rulesPath, requestJson).reply(201, responseJson);
+
+    const response = await twitterStreamAdapter.addRules([
+      { value: 'kittens', tag: 'cats with images' },
+    ]);
+
+    expect(response.body).toEqual(responseJson);
+  });
 
   it.todo('throws an error when a rule set failed');
 
@@ -43,7 +79,7 @@ describe('TwitterAdapter', () => {
   it('handles stream data event', async (done) => {
     const mockedResponse = { message: 'hello from nock' };
 
-    nockScope.reply(200, () => mockedResponse);
+    nockStreamScope.reply(200, () => mockedResponse);
 
     twitterStreamAdapter.startStream();
     const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
@@ -57,7 +93,7 @@ describe('TwitterAdapter', () => {
   });
 
   it('emits stream error timeout event', async (done) => {
-    nockScope.replyWithError({ code: 'ETIMEDOUT' });
+    nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
     twitterStreamAdapter.startStream();
     const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
@@ -71,7 +107,7 @@ describe('TwitterAdapter', () => {
   });
 
   it('handles stream error timeout event by reconnecting exponentially', () => {
-    nockScope.replyWithError({ code: 'ETIMEDOUT' });
+    nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
     const startStreamSpy = jest.spyOn(twitterStreamAdapter, 'startStream');
 
@@ -94,7 +130,7 @@ describe('TwitterAdapter', () => {
   });
 
   it('disconnects from filtered stream', () => {
-    nockScope.replyWithError({ code: 'ETIMEDOUT' });
+    nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
     twitterStreamAdapter.startStream();
     const stream: ReadableStream | undefined = twitterStreamAdapter.stream;

@@ -2,14 +2,25 @@ import { injectable } from 'inversify';
 import { ReadableStream } from 'needle';
 import needle from 'needle';
 
+type Rule = {
+  value: string;
+  tag: string;
+};
+
 @injectable()
 export class TwitterStreamAdapter {
+  private streamUrl: string | undefined;
+  private rulesUrl: string | undefined;
   public stream: ReadableStream | undefined;
   private timeout = 0;
 
+  constructor() {
+    this.streamUrl = process.env.TWITTER_STREAM_URL;
+    this.rulesUrl = process.env.TWITTER_RULES_URL;
+  }
+
   public startStream = (): ReadableStream => {
-    const streamUrl = process.env.TWITTER_STREAM_URL as string;
-    this.stream = needle.get(streamUrl, {
+    this.stream = needle.get(this.streamUrl as string, {
       headers: { Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}` },
     });
 
@@ -41,5 +52,15 @@ export class TwitterStreamAdapter {
 
   public stopStream = (): void => {
     this.stream?.emit('close');
+  };
+
+  public addRules = async (rules: Rule[]) => {
+    const data = { add: rules };
+    return await needle('post', this.rulesUrl as string, data, {
+      headers: {
+        Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
   };
 }
