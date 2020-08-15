@@ -27,3 +27,6 @@ jobs:
         env:
           NATURAL_LANGUAGE: 'English'
           NATURAL_VOCABULARY: 'afinn'
+          TWITTER_BEARER_TOKEN: 'FakeTokenABCD'
+          TWITTER_RULES_URL: 'https://api.twitter.com/2/tweets/search/stream/rules'
+          TWITTER_STREAM_URL: 'https://api.twitter.com/2/tweets/search/stream'
