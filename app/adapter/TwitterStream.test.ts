@@ -1,7 +1,6 @@
 import { TwitterStreamAdapter } from './TwitterStream';
 import nock from 'nock';
 import { ReadableStream } from 'needle';
-import { rejects } from 'assert';
 
 describe('TwitterStreamAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
@@ -92,71 +91,71 @@ describe('TwitterStreamAdapter', () => {
     it.todo('deletes all the rules');
   });
 
-  it.todo('connects to filtered stream and returns stream');
+  describe('handle stream', () => {
+    it('handles stream data event', async (done) => {
+      const mockedResponse = { message: 'hello from nock' };
 
-  it('handles stream data event', async (done) => {
-    const mockedResponse = { message: 'hello from nock' };
+      nockStreamScope.reply(200, () => mockedResponse);
 
-    nockStreamScope.reply(200, () => mockedResponse);
+      twitterStreamAdapter.startStream();
+      const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
 
-    twitterStreamAdapter.startStream();
-    const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+      jest.spyOn(JSON, 'parse');
 
-    jest.spyOn(JSON, 'parse');
-
-    stream?.on('data', () => {
-      expect(JSON.parse).toHaveBeenCalledWith({ message: 'hello from nock' });
-      done();
+      stream?.on('data', () => {
+        expect(JSON.parse).toHaveBeenCalledWith({ message: 'hello from nock' });
+        done();
+      });
     });
-  });
 
-  it('emits stream error timeout event', async (done) => {
-    nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
+    it('emits stream error timeout event', async (done) => {
+      nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
-    twitterStreamAdapter.startStream();
-    const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
-    // @ts-ignore
-    const emitSpy = jest.spyOn(stream, 'emit');
+      twitterStreamAdapter.startStream();
+      const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+      // @ts-ignore
+      const emitSpy = jest.spyOn(stream, 'emit');
 
-    stream?.on('err', () => {
-      expect(emitSpy).toHaveBeenCalledWith('timeout');
-      done();
+      stream?.on('err', () => {
+        expect(emitSpy).toHaveBeenCalledWith('timeout');
+        done();
+      });
     });
-  });
 
-  it('handles stream error timeout event by reconnecting exponentially', () => {
-    nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
+    it('handles stream error timeout event by reconnecting exponentially', () => {
+      nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
-    const startStreamSpy = jest.spyOn(twitterStreamAdapter, 'startStream');
+      const startStreamSpy = jest.spyOn(twitterStreamAdapter, 'startStream');
 
-    twitterStreamAdapter.startStream();
+      twitterStreamAdapter.startStream();
 
-    jest.advanceTimersToNextTimer(); // tick for event
-    jest.advanceTimersToNextTimer(); // tick for reconnect timeout
+      jest.advanceTimersToNextTimer(); // tick for event
+      jest.advanceTimersToNextTimer(); // tick for reconnect timeout
 
-    expect(startStreamSpy).toHaveBeenCalledTimes(1);
+      expect(startStreamSpy).toHaveBeenCalledTimes(1);
 
-    jest.advanceTimersToNextTimer(); // tick for event
-    jest.advanceTimersToNextTimer(); // tick for reconnect timeout
+      jest.advanceTimersToNextTimer(); // tick for event
+      jest.advanceTimersToNextTimer(); // tick for reconnect timeout
 
-    expect(startStreamSpy).toHaveBeenCalledTimes(2);
+      expect(startStreamSpy).toHaveBeenCalledTimes(2);
 
-    jest.advanceTimersToNextTimer(); // tick for event
-    jest.advanceTimersToNextTimer(); // tick for reconnect timeout
+      jest.advanceTimersToNextTimer(); // tick for event
+      jest.advanceTimersToNextTimer(); // tick for reconnect timeout
 
-    expect(startStreamSpy).toHaveBeenCalledTimes(3);
-  });
+      expect(startStreamSpy).toHaveBeenCalledTimes(3);
+    });
 
-  it('disconnects from filtered stream', () => {
-    nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
+    it('disconnects from filtered stream', () => {
+      nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
-    twitterStreamAdapter.startStream();
-    const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
-    // @ts-ignore
-    const emitSpy = jest.spyOn(stream, 'emit');
+      twitterStreamAdapter.startStream();
+      const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+      // @ts-ignore
+      const emitSpy = jest.spyOn(stream, 'emit');
 
-    twitterStreamAdapter.stopStream();
+      twitterStreamAdapter.stopStream();
 
-    expect(emitSpy).toHaveBeenCalledWith('close');
+      expect(emitSpy).toHaveBeenCalledWith('close');
+    });
   });
 });

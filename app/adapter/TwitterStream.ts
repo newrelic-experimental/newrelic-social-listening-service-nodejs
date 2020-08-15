@@ -54,7 +54,7 @@ export class TwitterStreamAdapter {
     this.stream?.emit('close');
   };
 
-  public addRules = async (rules: Rule[]) => {
+  public addRules = async (rules: Rule[]): Promise<needle.BodyData> => {
     const data = { add: rules };
     const response = await needle('post', this.rulesUrl as string, data, {
       headers: {
@@ -67,6 +67,6 @@ export class TwitterStreamAdapter {
       throw new Error(response.body);
     }
 
-    return response;
+    return response.body;
   };
 }
