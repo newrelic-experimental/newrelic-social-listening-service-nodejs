@@ -30,11 +30,9 @@ describe('TwitterStreamAdapter', () => {
     jest.clearAllMocks();
   });
 
-  describe('add stream filter rules', () => {
-    let requestJson: nock.RequestBodyMatcher;
-    let responseJson: nock.ReplyBody;
-    beforeEach(() => {
-      requestJson = {
+  describe('add filter rules', () => {
+    it('adds stream rules', async () => {
+      const requestJson: nock.RequestBodyMatcher = {
         add: [
           {
             value: 'kittens',
@@ -42,7 +40,7 @@ describe('TwitterStreamAdapter', () => {
           },
         ],
       };
-      responseJson = {
+      const responseJson: nock.ReplyBody = {
         data: [
           {
             value: 'kittens',
@@ -60,9 +58,7 @@ describe('TwitterStreamAdapter', () => {
           },
         },
       };
-    });
 
-    it('returns 201 when rules are added successfully', async () => {
       nock(host, options).post(rulesPath, requestJson).reply(201, responseJson);
 
       const response = await twitterStreamAdapter.addRules([
@@ -72,23 +68,102 @@ describe('TwitterStreamAdapter', () => {
       expect(response).toEqual(responseJson);
     });
 
-    it('throws an error when a rule set fails', async () => {
+    it('throws an error when rules addition fails', async () => {
+      const requestJson: nock.RequestBodyMatcher = {
+        add: [
+          {
+            value: 'kittens',
+            tag: 'cats with images',
+          },
+        ],
+      };
+
       nock(host, options)
         .post(rulesPath, requestJson)
-        .reply(500, 'an error occurred');
+        .reply(500, 'an error occurred while adding rules');
 
       await expect(
         twitterStreamAdapter.addRules([
           { value: 'kittens', tag: 'cats with images' },
         ]),
-      ).rejects.toThrow('an error occurred');
+      ).rejects.toThrow('an error occurred while adding rules');
     });
 
-    it.todo('returns all the rules');
+    it('fetches all the rules', async () => {
+      const responseJson = {
+        data: [
+          {
+            id: '1293637398979584001',
+            value: 'cat has:images',
+            tag: 'cats with images',
+          },
+          {
+            id: '1294596265720926208',
+            value: 'kittens',
+            tag: 'cats with images',
+          },
+        ],
+        meta: {
+          sent: '2020-08-15T12:58:10.575Z',
+        },
+      };
+      nock(host, options).get(rulesPath).reply(200, responseJson);
 
-    it.todo('deletes a rule');
+      const response = await twitterStreamAdapter.getRules();
 
-    it.todo('deletes all the rules');
+      expect(response).toEqual(responseJson);
+    });
+
+    it('throws an error when fetch rules fails', async () => {
+      nock(host, options)
+        .get(rulesPath)
+        .reply(500, 'an error occurred when fetching rules');
+
+      await expect(twitterStreamAdapter.getRules()).rejects.toThrow(
+        'an error occurred when fetching rules',
+      );
+    });
+
+    it('deletes rules by ids', async () => {
+      const requestJson = {
+        delete: {
+          ids: ['1294596265720926208'],
+        },
+      };
+
+      const responseJson = {
+        meta: {
+          sent: '2020-08-15T13:16:13.847Z',
+          summary: {
+            deleted: 1,
+            not_deleted: 0,
+          },
+        },
+      };
+      nock(host, options).post(rulesPath, requestJson).reply(200, responseJson);
+
+      const response = await twitterStreamAdapter.deleteRulesByIds([
+        '1294596265720926208',
+      ]);
+
+      expect(response).toEqual(responseJson);
+    });
+
+    it('throws an error when delete rules fails', async () => {
+      const requestJson: nock.RequestBodyMatcher = {
+        delete: {
+          ids: ['1294596265720926208'],
+        },
+      };
+
+      nock(host, options)
+        .post(rulesPath, requestJson)
+        .reply(500, 'an error occurred while deleting rules');
+
+      await expect(
+        twitterStreamAdapter.deleteRulesByIds(['1294596265720926208']),
+      ).rejects.toThrow('an error occurred while deleting rules');
+    });
   });
 
   describe('handle stream', () => {

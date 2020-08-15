@@ -69,4 +69,35 @@ export class TwitterStreamAdapter {
 
     return response.body;
   };
+
+  public getRules = async (): Promise<needle.BodyData> => {
+    const response = await needle('get', this.rulesUrl as string, {
+      headers: {
+        Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.statusCode !== 200) {
+      throw new Error(response.body);
+    }
+
+    return response.body;
+  };
+
+  public deleteRulesByIds = async (ids: string[]): Promise<needle.BodyData> => {
+    const data = { delete: { ids } };
+    const response = await needle('post', this.rulesUrl as string, data, {
+      headers: {
+        Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.statusCode !== 200) {
+      throw new Error(response.body);
+    }
+
+    return response.body;
+  };
 }
