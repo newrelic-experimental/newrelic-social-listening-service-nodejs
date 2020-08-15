@@ -56,11 +56,17 @@ export class TwitterStreamAdapter {
 
   public addRules = async (rules: Rule[]) => {
     const data = { add: rules };
-    return await needle('post', this.rulesUrl as string, data, {
+    const response = await needle('post', this.rulesUrl as string, data, {
       headers: {
         Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
         'Content-Type': 'application/json',
       },
     });
+
+    if (response.statusCode !== 201) {
+      throw new Error(response.body);
+    }
+
+    return response;
   };
 }

@@ -1,8 +1,9 @@
 import { TwitterStreamAdapter } from './TwitterStream';
 import nock from 'nock';
 import { ReadableStream } from 'needle';
+import { rejects } from 'assert';
 
-describe('TwitterAdapter', () => {
+describe('TwitterStreamAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
   let host: string;
   let streamPath: string;
@@ -30,49 +31,66 @@ describe('TwitterAdapter', () => {
     jest.clearAllMocks();
   });
 
-  it('returns 201 when rules are added successfully', async () => {
-    const requestJson = {
-      add: [
-        {
-          value: 'kittens',
-          tag: 'cats with images',
+  describe('add stream filter rules', () => {
+    let requestJson: nock.RequestBodyMatcher;
+    let responseJson: nock.ReplyBody;
+    beforeEach(() => {
+      requestJson = {
+        add: [
+          {
+            value: 'kittens',
+            tag: 'cats with images',
+          },
+        ],
+      };
+      responseJson = {
+        data: [
+          {
+            value: 'kittens',
+            tag: 'cats with images',
+            id: '1294596265720926208',
+          },
+        ],
+        meta: {
+          sent: '2020-08-15T11:26:17.865Z',
+          summary: {
+            created: 1,
+            not_created: 0,
+            valid: 1,
+            invalid: 0,
+          },
         },
-      ],
-    };
-    const responseJson = {
-      data: [
-        {
-          value: 'kittens',
-          tag: 'cats with images',
-          id: '1294596265720926208',
-        },
-      ],
-      meta: {
-        sent: '2020-08-15T11:26:17.865Z',
-        summary: {
-          created: 1,
-          not_created: 0,
-          valid: 1,
-          invalid: 0,
-        },
-      },
-    };
-    nock(host, options).post(rulesPath, requestJson).reply(201, responseJson);
+      };
+    });
 
-    const response = await twitterStreamAdapter.addRules([
-      { value: 'kittens', tag: 'cats with images' },
-    ]);
+    it('returns 201 when rules are added successfully', async () => {
+      nock(host, options).post(rulesPath, requestJson).reply(201, responseJson);
 
-    expect(response.body).toEqual(responseJson);
+      const response = await twitterStreamAdapter.addRules([
+        { value: 'kittens', tag: 'cats with images' },
+      ]);
+
+      expect(response).toEqual(responseJson);
+    });
+
+    it('throws an error when a rule set fails', async () => {
+      nock(host, options)
+        .post(rulesPath, requestJson)
+        .reply(500, 'an error occurred');
+
+      await expect(
+        twitterStreamAdapter.addRules([
+          { value: 'kittens', tag: 'cats with images' },
+        ]),
+      ).rejects.toThrow('an error occurred');
+    });
+
+    it.todo('returns all the rules');
+
+    it.todo('deletes a rule');
+
+    it.todo('deletes all the rules');
   });
-
-  it.todo('throws an error when a rule set failed');
-
-  it.todo('returns all the rules');
-
-  it.todo('deletes a rule');
-
-  it.todo('deletes all the rules');
 
   it.todo('connects to filtered stream and returns stream');
 
