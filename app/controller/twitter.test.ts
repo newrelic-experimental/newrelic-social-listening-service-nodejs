@@ -49,4 +49,16 @@ describe('TwitterController', () => {
 
     expect(twitterStreamAdapter.deleteRulesByIds).toHaveBeenCalledWith(ids);
   });
+
+  it('starts twitter filtered stream', () => {
+    twitterController.startStream();
+
+    expect(twitterStreamAdapter.startStream).toHaveBeenCalled();
+  });
+
+  it('stops twitter filtered stream', () => {
+    twitterStreamAdapter.stopStream();
+
+    expect(twitterStreamAdapter.stopStream).toHaveBeenCalled();
+  });
 });

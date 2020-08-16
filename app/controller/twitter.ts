@@ -6,6 +6,7 @@ import {
 } from 'inversify-express-utils';
 import { inject } from 'inversify';
 import { Request } from 'express';
+import needle from 'needle';
 
 import {
   TwitterStreamAdapter,
@@ -21,19 +22,31 @@ export class TwitterController {
   ) {}
 
   @httpGet('/rules')
-  public async fetchAllRules() {
+  public async fetchAllRules(): Promise<needle.BodyData> {
     return await this.twitterStreamAdapter.getRules();
   }
 
   @httpPost('/rules')
-  public async addRules(request: Request) {
+  public async addRules(request: Request): Promise<needle.BodyData> {
     const rules: TwitterStreamRule[] = request.body;
     return await this.twitterStreamAdapter.addRules(rules);
   }
 
   @httpDelete('/rules')
-  public async deleteRules(request: Request) {
+  public async deleteRules(request: Request): Promise<needle.BodyData> {
     const ids: string[] = request.body;
     return await this.twitterStreamAdapter.deleteRulesByIds(ids);
+  }
+
+  @httpGet('/stream')
+  public async startStream(): Promise<{ message: string }> {
+    await this.twitterStreamAdapter.startStream();
+    return { message: 'OK' };
+  }
+
+  @httpDelete('/stream')
+  public async stopStream(): Promise<{ message: string }> {
+    await this.twitterStreamAdapter.stopStream();
+    return { message: 'OK' };
   }
 }

@@ -39,6 +39,9 @@ export class TwitterStreamAdapter {
       })
       .on('timeout', () => {
         this.reconnect();
+      })
+      .on('close', () => {
+        console.log('Stream has been destroyed and file has been closed');
       });
 
     return this.stream;
@@ -51,7 +54,10 @@ export class TwitterStreamAdapter {
     }, 2 ** this.timeout);
 
   public stopStream = (): void => {
-    this.stream?.emit('close');
+    // @ts-ignore
+    this.stream.request.abort();
+    // @ts-ignore
+    this.stream.destroy();
   };
 
   public addRules = async (
