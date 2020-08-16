@@ -41,7 +41,7 @@ export class TwitterStreamAdapter {
         this.reconnect();
       })
       .on('close', () => {
-        console.log('Stream has been destroyed and file has been closed');
+        console.log('Stream has been destroyed');
       });
 
     return this.stream;

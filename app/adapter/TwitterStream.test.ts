@@ -226,11 +226,14 @@ describe('TwitterStreamAdapter', () => {
       twitterStreamAdapter.startStream();
       const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
       // @ts-ignore
-      const emitSpy = jest.spyOn(stream, 'emit');
+      const abortSpy = jest.spyOn(stream.request, 'abort');
+      // @ts-ignore
+      const destroySpy = jest.spyOn(stream, 'destroy');
 
       twitterStreamAdapter.stopStream();
 
-      expect(emitSpy).toHaveBeenCalledWith('close');
+      expect(abortSpy).toHaveBeenCalled();
+      expect(destroySpy).toHaveBeenCalled();
     });
   });
 });
