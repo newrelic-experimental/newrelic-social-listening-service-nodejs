@@ -10,6 +10,7 @@ import { SentimentAnalysisService } from './service/sentimentAnalysis';
 import { SentimentAnalyser } from './lib/SentimentAnalyser';
 import { Natural } from './lib/Natural';
 import { SpellCorrectorFactory } from './lib/SpellCorrector';
+import { TwitterStreamAdapter } from './adapter/TwitterStream';
 import TYPES from './constant/types';
 
 import './controller/listener';
@@ -25,6 +26,10 @@ container.bind<Natural>(TYPES.Natural).to(Natural);
 container
   .bind<SpellCorrectorFactory>(TYPES.SpellCorrector)
   .to(SpellCorrectorFactory)
+  .inSingletonScope();
+container
+  .bind<TwitterStreamAdapter>(TYPES.TwitterStreamAdapter)
+  .to(TwitterStreamAdapter)
   .inSingletonScope();
 
 const server = new InversifyExpressServer(container);
