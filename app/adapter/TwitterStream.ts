@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { ReadableStream } from 'needle';
 import needle from 'needle';
 
-type Rule = {
+export type TwitterStreamRule = {
   value: string;
   tag: string;
 };
@@ -54,7 +54,9 @@ export class TwitterStreamAdapter {
     this.stream?.emit('close');
   };
 
-  public addRules = async (rules: Rule[]): Promise<needle.BodyData> => {
+  public addRules = async (
+    rules: TwitterStreamRule[],
+  ): Promise<needle.BodyData> => {
     const data = { add: rules };
     const response = await needle('post', this.rulesUrl as string, data, {
       headers: {

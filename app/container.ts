@@ -14,6 +14,7 @@ import { TwitterStreamAdapter } from './adapter/TwitterStream';
 import TYPES from './constant/types';
 
 import './controller/listener';
+import './controller/twitter';
 
 const container = new Container();
 container
