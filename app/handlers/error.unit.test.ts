@@ -1,5 +1,5 @@
 import { globalErrorHandler, bodyParserHandler } from './error';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { ApiError } from '../helpers/ApiError';
 
 describe('bodyParserHandler', () => {
@@ -7,7 +7,7 @@ describe('bodyParserHandler', () => {
     jest.clearAllMocks();
   });
   const req = {} as Request;
-  const res: any = {} as Response;
+  const res: Response = {} as Response;
   const next = jest.fn();
   const expectedError = new ApiError(400, 'BadRequest', 'Malformed JSON');
 

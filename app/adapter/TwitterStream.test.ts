@@ -1,9 +1,12 @@
 import { TwitterStreamAdapter } from './TwitterStream';
 import nock from 'nock';
-import { ReadableStream } from 'needle';
+import { SentimentAnalysisServiceMock } from '../test/mock/sentimentAnalysisServiceMock';
+import { SentimentAnalyserMock } from '../test/mock/SentimentAnalyserMock';
+import { SentimentAnalysisService } from '../service/sentimentAnalysis';
 
 describe('TwitterStreamAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
+  let sentimentAnalysisService: SentimentAnalysisService;
   let host: string;
   let streamPath: string;
   let rulesPath: string;
@@ -22,7 +25,14 @@ describe('TwitterStreamAdapter', () => {
 
     nockStreamScope = nock(host, options).get(streamPath);
 
-    twitterStreamAdapter = new TwitterStreamAdapter();
+    const sentimentAnalyser = new SentimentAnalyserMock();
+    // @ts-ignore
+    sentimentAnalysisService = new SentimentAnalysisServiceMock(
+      sentimentAnalyser,
+    );
+
+    // @ts-ignore
+    twitterStreamAdapter = new TwitterStreamAdapter(sentimentAnalysisService);
   });
 
   afterEach(() => {
@@ -173,7 +183,7 @@ describe('TwitterStreamAdapter', () => {
       nockStreamScope.reply(200, () => mockedResponse);
 
       twitterStreamAdapter.startStream();
-      const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+      const stream = twitterStreamAdapter.stream;
 
       jest.spyOn(JSON, 'parse');
 
@@ -183,11 +193,31 @@ describe('TwitterStreamAdapter', () => {
       });
     });
 
+    it('data event callback analyses data sentiment', async (done) => {
+      const sentimentAnalysisServiceSpy = jest.spyOn(
+        sentimentAnalysisService,
+        'getSentiment',
+      );
+      const mockedResponse = JSON.stringify({ data: { text: 'tweet tweet' } });
+
+      nockStreamScope.reply(200, () => mockedResponse);
+
+      twitterStreamAdapter.startStream();
+      const stream = twitterStreamAdapter.stream;
+
+      stream?.on('data', () => {
+        expect(sentimentAnalysisServiceSpy).toHaveBeenCalledWith({
+          text: 'tweet tweet',
+        });
+        done();
+      });
+    });
+
     it('emits stream error timeout event', async (done) => {
       nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
       twitterStreamAdapter.startStream();
-      const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+      const stream = twitterStreamAdapter.stream;
       // @ts-ignore
       const emitSpy = jest.spyOn(stream, 'emit');
 
@@ -224,7 +254,7 @@ describe('TwitterStreamAdapter', () => {
       nockStreamScope.replyWithError({ code: 'ETIMEDOUT' });
 
       twitterStreamAdapter.startStream();
-      const stream: ReadableStream | undefined = twitterStreamAdapter.stream;
+      const stream = twitterStreamAdapter.stream;
       // @ts-ignore
       const abortSpy = jest.spyOn(stream.request, 'abort');
       // @ts-ignore

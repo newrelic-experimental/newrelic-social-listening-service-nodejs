@@ -1,9 +1,6 @@
 import { SentimentAnalysisService } from './sentimentAnalysis';
 import { SentimentAnalyser } from '../lib/SentimentAnalyser';
-
-class SentimentAnalyserMock {
-  analyse = (text: string) => 3;
-}
+import { SentimentAnalyserMock } from '../test/mock/SentimentAnalyserMock';
 
 describe('SentimentAnalysisService', () => {
   let service: SentimentAnalysisService;
@@ -21,7 +18,7 @@ describe('SentimentAnalysisService', () => {
 
     expect(result).toEqual({
       text,
-      sentiment: 3,
+      sentiment: 4, // comes from SentimentAnalyserMock
     });
   });
 });

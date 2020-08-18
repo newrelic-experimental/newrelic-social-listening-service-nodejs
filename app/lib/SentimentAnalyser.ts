@@ -8,7 +8,6 @@ import { SpellCorrectorFactory } from './SpellCorrector';
 
 @injectable()
 export class SentimentAnalyser {
-  corrector: any;
   constructor(
     @inject(TYPES.Natural) private natural: Natural,
     @inject(TYPES.SpellCorrector) private spellCorrector: SpellCorrectorFactory,
@@ -53,7 +52,7 @@ export class SentimentAnalyser {
       this.toLowerCase,
       this.alphaOnly,
       this.tokenize,
-      this.spellCorrect,
+      // this.spellCorrect,
       this.removeStopWords,
       this.process,
     )(text);

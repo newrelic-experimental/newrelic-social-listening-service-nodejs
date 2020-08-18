@@ -1,6 +1,8 @@
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { ReadableStream } from 'needle';
 import needle from 'needle';
+import TYPES from '../constant/types';
+import { SentimentAnalysisService } from '../service/sentimentAnalysis';
 
 export type TwitterStreamRule = {
   value: string;
@@ -14,7 +16,10 @@ export class TwitterStreamAdapter {
   public stream: ReadableStream | undefined;
   private timeout = 0;
 
-  constructor() {
+  constructor(
+    @inject(TYPES.SentimentAnalysisService)
+    private sentimentAnalysisService: SentimentAnalysisService,
+  ) {
     this.streamUrl = process.env.TWITTER_STREAM_URL;
     this.rulesUrl = process.env.TWITTER_RULES_URL;
   }
@@ -25,9 +30,13 @@ export class TwitterStreamAdapter {
     });
 
     this.stream
-      .on('data', (data) => {
+      .on('data', async (data) => {
         try {
-          console.log(JSON.parse(data));
+          const jsonData = JSON.parse(data);
+          const sentiment = await this.sentimentAnalysisService.getSentiment({
+            text: jsonData.data.text,
+          });
+          console.log(JSON.stringify({ data: data.text, sentiment }));
         } catch (e) {
           // Keep alive signal received. Do nothing.
         }

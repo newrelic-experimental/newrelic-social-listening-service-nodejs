@@ -3,4 +3,5 @@ module.exports = {
   transform: {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
+  coveragePathIgnorePatterns: ['<rootDir>/app/test/mock'],
 };
