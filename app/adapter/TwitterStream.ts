@@ -2,7 +2,7 @@ import { injectable } from 'inversify';
 import { ReadableStream } from 'needle';
 import needle from 'needle';
 
-type Rule = {
+export type TwitterStreamRule = {
   value: string;
   tag: string;
 };
@@ -39,6 +39,9 @@ export class TwitterStreamAdapter {
       })
       .on('timeout', () => {
         this.reconnect();
+      })
+      .on('close', () => {
+        console.log('Stream has been destroyed');
       });
 
     return this.stream;
@@ -51,10 +54,15 @@ export class TwitterStreamAdapter {
     }, 2 ** this.timeout);
 
   public stopStream = (): void => {
-    this.stream?.emit('close');
+    // @ts-ignore
+    this.stream.request.abort();
+    // @ts-ignore
+    this.stream.destroy();
   };
 
-  public addRules = async (rules: Rule[]): Promise<needle.BodyData> => {
+  public addRules = async (
+    rules: TwitterStreamRule[],
+  ): Promise<needle.BodyData> => {
     const data = { add: rules };
     const response = await needle('post', this.rulesUrl as string, data, {
       headers: {
