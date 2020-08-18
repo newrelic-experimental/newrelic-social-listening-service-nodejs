@@ -57,7 +57,7 @@ describe('TwitterController', () => {
   });
 
   it('stops twitter filtered stream', () => {
-    twitterStreamAdapter.stopStream();
+    twitterController.stopStream();
 
     expect(twitterStreamAdapter.stopStream).toHaveBeenCalled();
   });
