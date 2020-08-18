@@ -52,6 +52,7 @@ export class SentimentAnalyser {
       this.toLowerCase,
       this.alphaOnly,
       this.tokenize,
+      // TODO: implement non blocking spell checker
       // this.spellCorrect,
       this.removeStopWords,
       this.process,
