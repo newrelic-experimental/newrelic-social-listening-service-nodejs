@@ -1,4 +1,4 @@
-import { NRMetricClient } from './MetricClient';
+import { NRMetricClient, SentimentMetricArgs } from './MetricClient';
 import { MetricClient } from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
 
 describe('New Relic Metric Client', () => {
@@ -13,10 +13,34 @@ describe('New Relic Metric Client', () => {
   });
 
   it('creates and sends MetricBatch', () => {
-    const sendSpy = jest.spyOn(MetricClient.prototype, 'send');
+    const sendMock = (MetricClient.prototype.send = jest.fn());
 
-    metricClient.sendBatch();
+    const args: SentimentMetricArgs = {
+      name: 'sentiment',
+      value: 1.5,
+      attrs: {},
+      timestamp: Date.now(),
+    };
+    metricClient.sendMetric(args);
 
-    expect(sendSpy).toHaveBeenCalled();
+    expect(sendMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        common: {
+          attributes: {},
+          'interval.ms': 1000,
+          timestamp: expect.any(Number),
+        },
+        metrics: [
+          {
+            'interval.ms': undefined,
+            name: 'sentiment',
+            timestamp: expect.any(Number),
+            type: 'gauge',
+            value: 1.5,
+          },
+        ],
+      }),
+      expect.any(Function),
+    );
   });
 });
