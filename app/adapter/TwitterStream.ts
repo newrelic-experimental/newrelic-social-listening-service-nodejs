@@ -11,6 +11,11 @@ export type TwitterStreamRule = {
   tag: string;
 };
 
+export type MatchingRules = {
+  value: string;
+  tag: string;
+};
+
 @injectable()
 export class TwitterStreamAdapter {
   private streamUrl: string | undefined;
@@ -33,20 +38,9 @@ export class TwitterStreamAdapter {
     });
 
     this.stream
-      .on('data', async (data) => {
+      .on('data', async (data: string) => {
         try {
-          const jsonData = JSON.parse(data);
-          const sentiment = await this.sentimentAnalysisService.getSentiment({
-            text: jsonData.data.text,
-          });
-          console.log(JSON.stringify({ data: data.text, sentiment }));
-          const args: SentimentMetricArgs = {
-            name: 'sentiment',
-            value: sentiment.sentiment,
-            attrs: {},
-            timestamp: Date.now(),
-          };
-          this.nrMetricClient.sendMetric(args);
+          await this.analyseSentimentAndSendMetric(JSON.parse(data));
         } catch (e) {
           // Keep alive signal received. Do nothing.
         }
@@ -64,6 +58,25 @@ export class TwitterStreamAdapter {
       });
 
     return this.stream;
+  };
+
+  private analyseSentimentAndSendMetric = async (streamData: {
+    data: { text: string };
+    matching_rules: MatchingRules[];
+  }): Promise<void> => {
+    const { matching_rules, data } = streamData;
+    const matchingRules = this.stringifyRules(matching_rules);
+    const sentiment = await this.sentimentAnalysisService.getSentiment({
+      text: data.text,
+    });
+    console.log(JSON.stringify({ data: data.text, sentiment }));
+    const args: SentimentMetricArgs = {
+      name: 'sentiment',
+      value: sentiment.sentiment,
+      attrs: { platform: 'twitter', rules: matchingRules },
+      timestamp: Date.now(),
+    };
+    this.nrMetricClient.sendMetric(args);
   };
 
   private reconnect = () =>
@@ -127,4 +140,10 @@ export class TwitterStreamAdapter {
 
     return response.body;
   };
+
+  private stringifyRules = (rules: MatchingRules[]): string =>
+    rules.reduce((acc: string, rule: { tag: string }) => {
+      acc += acc === '' ? rule.tag : `,${rule.tag}`;
+      return acc;
+    }, '');
 }

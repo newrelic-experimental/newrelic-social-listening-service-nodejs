@@ -27,7 +27,7 @@ describe('New Relic Metric Client', () => {
       expect.objectContaining({
         common: {
           attributes: {},
-          'interval.ms': 1000,
+          'interval.ms': undefined,
           timestamp: expect.any(Number),
         },
         metrics: [

@@ -3,10 +3,12 @@ import nock from 'nock';
 import { SentimentAnalysisServiceMock } from '../test/mock/sentimentAnalysisServiceMock';
 import { SentimentAnalyserMock } from '../test/mock/SentimentAnalyserMock';
 import { SentimentAnalysisService } from '../service/sentimentAnalysis';
+import { NRMetricClient } from '../lib/MetricClient';
 
 describe('TwitterStreamAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
   let sentimentAnalysisService: SentimentAnalysisService;
+  let nrMetricClient: NRMetricClient;
   let host: string;
   let streamPath: string;
   let rulesPath: string;
@@ -30,9 +32,13 @@ describe('TwitterStreamAdapter', () => {
     sentimentAnalysisService = new SentimentAnalysisServiceMock(
       sentimentAnalyser,
     );
+    nrMetricClient = new NRMetricClient();
 
     // @ts-ignore
-    twitterStreamAdapter = new TwitterStreamAdapter(sentimentAnalysisService);
+    twitterStreamAdapter = new TwitterStreamAdapter(
+      sentimentAnalysisService,
+      nrMetricClient,
+    );
   });
 
   afterEach(() => {
@@ -193,22 +199,27 @@ describe('TwitterStreamAdapter', () => {
       });
     });
 
-    it('data event callback analyses data sentiment', async (done) => {
+    it('data event callback analyses data sentiment and sends metric to NR', async (done) => {
       const sentimentAnalysisServiceSpy = jest.spyOn(
         sentimentAnalysisService,
         'getSentiment',
       );
-      const mockedResponse = JSON.stringify({ data: { text: 'tweet tweet' } });
+      const sendMetricMock = (nrMetricClient.sendMetric = jest.fn());
+      const mockedResponse = JSON.stringify({
+        data: { text: 'tweet tweet' },
+        matching_rules: [{ value: 'tweet', tag: 'tweet' }],
+      });
 
       nockStreamScope.reply(200, () => mockedResponse);
 
       twitterStreamAdapter.startStream();
       const stream = twitterStreamAdapter.stream;
 
-      stream?.on('data', () => {
-        expect(sentimentAnalysisServiceSpy).toHaveBeenCalledWith({
+      stream?.on('data', async () => {
+        await expect(sentimentAnalysisServiceSpy).toHaveBeenCalledWith({
           text: 'tweet tweet',
         });
+        await expect(sendMetricMock).toHaveBeenCalled();
         done();
       });
     });
