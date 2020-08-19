@@ -4,6 +4,8 @@ import {
   MetricBatch,
 } from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
 import { AttributeMap } from '@newrelic/telemetry-sdk/dist/src/telemetry/attributeMap';
+import { IncomingMessage } from 'http';
+import { injectable } from 'inversify';
 
 export type SentimentMetricArgs = {
   name: string;
@@ -12,6 +14,7 @@ export type SentimentMetricArgs = {
   timestamp?: number;
 };
 
+@injectable()
 export class NRMetricClient {
   public client: MetricClient;
 
@@ -19,7 +22,6 @@ export class NRMetricClient {
     this.client = new MetricClient({
       apiKey: process.env.NR_API_KEY as string,
       host: process.env.NR_METRIC_HOST as string,
-      // path: process.env.NR_METRIC_PATH as string
     });
   }
 
@@ -27,10 +29,19 @@ export class NRMetricClient {
     const { name, value, attrs, timestamp } = args;
     const gMetric = new GaugeMetric(name, value, attrs, timestamp);
     const metricBatch = new MetricBatch(attrs, Date.now(), 1000, [gMetric]);
-    this.client.send(metricBatch, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+    this.client.send(
+      metricBatch,
+      (err: Error, res: IncomingMessage, body: string) => {
+        if (err) {
+          console.log(err);
+        }
+        if (res) {
+          console.log(res);
+        }
+        if (body) {
+          console.log(body);
+        }
+      },
+    );
   };
 }

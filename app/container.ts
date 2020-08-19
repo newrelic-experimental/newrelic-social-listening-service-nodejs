@@ -11,6 +11,7 @@ import { SentimentAnalyser } from './lib/SentimentAnalyser';
 import { Natural } from './lib/Natural';
 import { SpellCorrectorFactory } from './lib/SpellCorrector';
 import { TwitterStreamAdapter } from './adapter/TwitterStream';
+import { NRMetricClient } from './lib/MetricClient';
 import TYPES from './constant/types';
 
 import './controller/listener';
@@ -31,6 +32,10 @@ container
 container
   .bind<TwitterStreamAdapter>(TYPES.TwitterStreamAdapter)
   .to(TwitterStreamAdapter)
+  .inSingletonScope();
+container
+  .bind<NRMetricClient>(TYPES.NRMetricClient)
+  .to(NRMetricClient)
   .inSingletonScope();
 
 const server = new InversifyExpressServer(container);

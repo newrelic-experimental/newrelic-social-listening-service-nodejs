@@ -3,6 +3,8 @@ import { ReadableStream } from 'needle';
 import needle from 'needle';
 import TYPES from '../constant/types';
 import { SentimentAnalysisService } from '../service/sentimentAnalysis';
+import { NRMetricClient } from '../lib/MetricClient';
+import { SentimentMetricArgs } from '../lib/MetricClient';
 
 export type TwitterStreamRule = {
   value: string;
@@ -19,6 +21,7 @@ export class TwitterStreamAdapter {
   constructor(
     @inject(TYPES.SentimentAnalysisService)
     private sentimentAnalysisService: SentimentAnalysisService,
+    @inject(TYPES.NRMetricClient) private nrMetricClient: NRMetricClient,
   ) {
     this.streamUrl = process.env.TWITTER_STREAM_URL;
     this.rulesUrl = process.env.TWITTER_RULES_URL;
@@ -37,6 +40,13 @@ export class TwitterStreamAdapter {
             text: jsonData.data.text,
           });
           console.log(JSON.stringify({ data: data.text, sentiment }));
+          const args: SentimentMetricArgs = {
+            name: 'sentiment',
+            value: sentiment.sentiment,
+            attrs: {},
+            timestamp: Date.now(),
+          };
+          this.nrMetricClient.sendMetric(args);
         } catch (e) {
           // Keep alive signal received. Do nothing.
         }
