@@ -3,12 +3,12 @@ import nock from 'nock';
 import { SentimentAnalysisServiceMock } from '../test/mock/sentimentAnalysisServiceMock';
 import { SentimentAnalyserMock } from '../test/mock/SentimentAnalyserMock';
 import { SentimentAnalysisService } from '../service/sentimentAnalysis';
-import { NRMetricClient } from '../lib/MetricClient';
+import { NewRelicMetricClient } from '../lib/MetricClient';
 
 describe('TwitterStreamAdapter', () => {
   let twitterStreamAdapter: TwitterStreamAdapter;
   let sentimentAnalysisService: SentimentAnalysisService;
-  let nrMetricClient: NRMetricClient;
+  let nrMetricClient: NewRelicMetricClient;
   let host: string;
   let streamPath: string;
   let rulesPath: string;
@@ -32,7 +32,7 @@ describe('TwitterStreamAdapter', () => {
     sentimentAnalysisService = new SentimentAnalysisServiceMock(
       sentimentAnalyser,
     );
-    nrMetricClient = new NRMetricClient();
+    nrMetricClient = new NewRelicMetricClient();
 
     // @ts-ignore
     twitterStreamAdapter = new TwitterStreamAdapter(
@@ -44,6 +44,7 @@ describe('TwitterStreamAdapter', () => {
   afterEach(() => {
     nock.cleanAll();
     jest.clearAllMocks();
+    jest.clearAllTimers();
   });
 
   describe('add filter rules', () => {
@@ -215,11 +216,11 @@ describe('TwitterStreamAdapter', () => {
       twitterStreamAdapter.startStream();
       const stream = twitterStreamAdapter.stream;
 
-      stream?.on('data', async () => {
-        await expect(sentimentAnalysisServiceSpy).toHaveBeenCalledWith({
+      stream?.on('data', () => {
+        expect(sentimentAnalysisServiceSpy).toHaveBeenCalledWith({
           text: 'tweet tweet',
         });
-        await expect(sendMetricMock).toHaveBeenCalled();
+        setImmediate(() => expect(sendMetricMock).toHaveBeenCalled());
         done();
       });
     });
@@ -248,17 +249,17 @@ describe('TwitterStreamAdapter', () => {
       jest.advanceTimersToNextTimer(); // tick for event
       jest.advanceTimersToNextTimer(); // tick for reconnect timeout
 
-      expect(startStreamSpy).toHaveBeenCalledTimes(1);
-
-      jest.advanceTimersToNextTimer(); // tick for event
-      jest.advanceTimersToNextTimer(); // tick for reconnect timeout
-
       expect(startStreamSpy).toHaveBeenCalledTimes(2);
 
       jest.advanceTimersToNextTimer(); // tick for event
       jest.advanceTimersToNextTimer(); // tick for reconnect timeout
 
       expect(startStreamSpy).toHaveBeenCalledTimes(3);
+
+      jest.advanceTimersToNextTimer(); // tick for event
+      jest.advanceTimersToNextTimer(); // tick for reconnect timeout
+
+      expect(startStreamSpy).toHaveBeenCalledTimes(4);
     });
 
     it('disconnects from filtered stream', () => {

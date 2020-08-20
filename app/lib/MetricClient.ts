@@ -15,7 +15,7 @@ export type SentimentMetricArgs = {
 };
 
 @injectable()
-export class NRMetricClient {
+export class NewRelicMetricClient {
   public client: MetricClient;
 
   constructor() {

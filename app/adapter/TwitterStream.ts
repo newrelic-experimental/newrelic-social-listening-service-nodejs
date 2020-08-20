@@ -2,8 +2,11 @@ import { inject, injectable } from 'inversify';
 import { ReadableStream } from 'needle';
 import needle from 'needle';
 import TYPES from '../constant/types';
-import { SentimentAnalysisService } from '../service/sentimentAnalysis';
-import { NRMetricClient } from '../lib/MetricClient';
+import {
+  ISentimentResponse,
+  SentimentAnalysisService,
+} from '../service/sentimentAnalysis';
+import { NewRelicMetricClient } from '../lib/MetricClient';
 import { SentimentMetricArgs } from '../lib/MetricClient';
 
 export type TwitterStreamRule = {
@@ -16,6 +19,11 @@ export type MatchingRules = {
   tag: string;
 };
 
+export type StreamData = {
+  data: { text: string };
+  matching_rules: MatchingRules[];
+};
+
 @injectable()
 export class TwitterStreamAdapter {
   private streamUrl: string | undefined;
@@ -26,7 +34,8 @@ export class TwitterStreamAdapter {
   constructor(
     @inject(TYPES.SentimentAnalysisService)
     private sentimentAnalysisService: SentimentAnalysisService,
-    @inject(TYPES.NRMetricClient) private nrMetricClient: NRMetricClient,
+    @inject(TYPES.NewRelicMetricClient)
+    private nrMetricClient: NewRelicMetricClient,
   ) {
     this.streamUrl = process.env.TWITTER_STREAM_URL;
     this.rulesUrl = process.env.TWITTER_RULES_URL;
@@ -40,7 +49,11 @@ export class TwitterStreamAdapter {
     this.stream
       .on('data', async (data: string) => {
         try {
-          await this.analyseSentimentAndSendMetric(JSON.parse(data));
+          const streamData: StreamData = JSON.parse(data);
+          const sentiment: ISentimentResponse = await this.getSentiment(
+            streamData,
+          );
+          this.sendMetric(streamData, sentiment);
         } catch (e) {
           // Keep alive signal received. Do nothing.
         }
@@ -60,16 +73,22 @@ export class TwitterStreamAdapter {
     return this.stream;
   };
 
-  private analyseSentimentAndSendMetric = async (streamData: {
-    data: { text: string };
-    matching_rules: MatchingRules[];
-  }): Promise<void> => {
-    const { matching_rules, data } = streamData;
-    const matchingRules = this.stringifyRules(matching_rules);
-    const sentiment = await this.sentimentAnalysisService.getSentiment({
+  private getSentiment = async (
+    streamData: StreamData,
+  ): Promise<ISentimentResponse> => {
+    const { data } = streamData;
+    return await this.sentimentAnalysisService.getSentiment({
       text: data.text,
     });
-    console.log(JSON.stringify({ data: data.text, sentiment }));
+  };
+
+  private sendMetric = async (
+    streamData: StreamData,
+    sentiment: ISentimentResponse,
+  ): Promise<void> => {
+    const { matching_rules } = streamData;
+    const matchingRules = this.stringifyRules(matching_rules);
+
     const args: SentimentMetricArgs = {
       name: 'sentiment',
       value: sentiment.sentiment,

@@ -1,11 +1,11 @@
-import { NRMetricClient, SentimentMetricArgs } from './MetricClient';
+import { NewRelicMetricClient, SentimentMetricArgs } from './MetricClient';
 import { MetricClient } from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
 
 describe('New Relic Metric Client', () => {
-  let metricClient: NRMetricClient;
+  let metricClient: NewRelicMetricClient;
 
   beforeEach(() => {
-    metricClient = new NRMetricClient();
+    metricClient = new NewRelicMetricClient();
   });
 
   it('initialises NR MetricClient', () => {
