@@ -4,6 +4,7 @@ const TYPES = {
   Natural: Symbol.for('Natural'),
   SpellCorrector: Symbol.for('SpellCorrector'),
   TwitterStreamAdapter: Symbol.for('TwitterStreamAdapter'),
+  NewRelicMetricClient: Symbol.for('NewRelicMetricClient'),
 };
 
 export default TYPES;
