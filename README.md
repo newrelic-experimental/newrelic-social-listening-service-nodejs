@@ -1,6 +1,6 @@
 [![Community Project header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Experimental.png)](https://opensource.newrelic.com/oss-category/#experimental)
 
-# Social Listening Service [build badges go here when available]
+# Social Listening Service ![lint & test](https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs/workflows/continuous%20integration/badge.svg)
 
 >[Brief description - what is the project and value does it provide? How often should users expect to get releases? How is versioning set up? Where does this project want to go?]
 
