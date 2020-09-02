@@ -28,7 +28,7 @@ Once the tokens are ready create a `.env` file in the root directory and place a
 #### Installation and App start
 
 Assuming the repository is cloned and the `.env` file is ready:
- - run `npm install` (or `yarn install` if you really want to)
+ - run `npm install` (or `yarn install`)
  - run the app:
    - `npm run dev:start` or
    - `npm run docker:dev:start` - if you want it to run in a Docker container
@@ -54,9 +54,9 @@ Assuming the repository is cloned and the `.env` file is ready:
 ## Testing
 
 In order to run test simply run `npm test`
- - it will run unit test as well as the app integration tests
+ - it will run `unit` test as well as `integration` tests
  - it will log all the test results to the console
- - it will display test coverage report after all tests are run
+ - it will display test `coverage report` after all tests are run
  - it uses `jest` 
  
 `E2E` tests are not included in this version yet.
