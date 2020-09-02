@@ -12,3 +12,6 @@ build
 
 # test
 coverage
+
+# allow examples
+!examples/*
