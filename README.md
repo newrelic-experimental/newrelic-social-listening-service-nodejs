@@ -46,9 +46,9 @@ Running the app in production mode:
 
 ## Getting Started
 
-> [Simple steps to start working with the software similar to a "Hello World"]
+### Streaming Twitter Data
 
-#### Streaming Twitter Data
+#### Setup Twitter stream rules
 
 In order to start streaming Twitter data, firs you need to setup [Twitter rules](https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/quick-start).
 Under the hood this app is using [Twitter Streaming Api](https://developer.twitter.com/en/docs/twitter-api/tweets/filtered-stream/api-reference).
@@ -56,7 +56,7 @@ Given that you already have your Twitter Bearer token, you can either set Twitte
 
 To add a rule via Social Listening Service send a POST request to the following endpoint:
 
-> You need to add your Twitter Bearer token to each request
+> :exclamation: You need to add your Twitter Bearer token to each request
 
 ```text
 POST http://{host}/twitter/rules
@@ -113,30 +113,41 @@ The response after posting the rules, will look something like this:
 
 And it's a standard response from Twitter Streaming API indicating which rules where added or not and why.
 
+#### Start Twitter stream
+
 **When you're happy with the rules, you can start streaming**.
 Send a POST request to the following endpoint:
+
 ```text
 POST http://{host}/twitter/stream
 ```
+
 This will trigger a request to Twitter Streaming API and the app starts listen to tweets matching the your rules.
 
 The response you get from the request should be as follows:
+
 ```javascript
 {
     "message": "OK"
 }
 ```
 
+#### Stop Twitter stream
+
 In order to stop the stream send a DELETE request to the same endpoint:
+
 ```text
 DELETE http://{host}/twitter/stream
 ```
+
 and you will get the `OK` response:
+
 ```javascript
 {
     "message": "OK"
 }
 ```
+
 This indicates that the stream stopped and you won't be getting any data from Twitter.
 
 ## Usage
