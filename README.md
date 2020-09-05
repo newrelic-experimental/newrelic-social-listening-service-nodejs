@@ -2,8 +2,6 @@
 
 # Social Listening Service ![lint & test](https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs/workflows/continuous%20integration/badge.svg)
 
-> [Brief description - what is the project and value does it provide? How often should users expect to get releases? How is versioning set up? Where does this project want to go?]
-
 Social Listening Service is an app that listens to data from social platforms (currently only Twitter is supported) and analyses sentiment of natural language data that it listens to.
 It also automatically sends sentiment data to (your) New Relic account where it can be easily charted.
 In combination with New Relic [Dashboards](https://docs.newrelic.com/docs/query-your-data/explore-query-data/dashboards/introduction-new-relic-one-dashboards) it creates a powerful tool that shows sentiment of your audience in reaction to events that you want to track - like certain words, phrases, hashtags etc.
@@ -182,6 +180,6 @@ If you have any questions, or to execute our corporate CLA, required if your con
 
 ## License
 
-[Project Name] is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
+Social Listening Service is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
 
-> [If applicable: The [project name] also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]
+> [Social Listening Service also uses source code from third-party libraries. You can find full details on which libraries are used and the terms under which they are licensed in the third-party notices document.]
