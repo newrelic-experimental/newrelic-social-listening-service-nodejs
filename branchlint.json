@@ -4,10 +4,8 @@
       "feature",
       "bugfix",
       "hotfix",
-      "enhancement",
       "improvement",
       "chore",
-      "documentation",
       "prerelease",
       "release"
     ],
