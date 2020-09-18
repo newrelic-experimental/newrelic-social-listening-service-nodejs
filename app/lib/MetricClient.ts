@@ -1,10 +1,7 @@
-import {
-  MetricClient,
-  GaugeMetric,
-  MetricBatch,
-} from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
+import { MetricClient } from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
+import needle from 'needle';
 import { AttributeMap } from '@newrelic/telemetry-sdk/dist/src/telemetry/attributeMap';
-import { IncomingMessage } from 'http';
+// import { IncomingMessage } from 'http';
 import { injectable } from 'inversify';
 
 export type SentimentMetricArgs = {
@@ -27,23 +24,30 @@ export class NewRelicMetricClient {
 
   sendMetric = (args: SentimentMetricArgs): void => {
     const { name, value, attrs, timestamp } = args;
-    const gMetric = new GaugeMetric(name, value, attrs, timestamp);
-    const metricBatch = new MetricBatch(attrs, Date.now(), undefined, [
-      gMetric,
-    ]);
-    this.client.send(
-      metricBatch,
-      (err: Error, res: IncomingMessage, body: string) => {
-        if (err) {
-          console.log('MetricClient: err -', err);
-        }
-        if (res) {
-          console.log('MetricClient: res - OK');
-        }
-        if (body) {
-          console.log('MetricClient: body - OK');
-        }
+
+    const path = `https://${process.env.NR_METRIC_HOST}${process.env.NR_METRIC_PATH}`;
+    const data = [
+      {
+        metrics: [
+          {
+            name,
+            value,
+            timestamp,
+            attributes: attrs,
+          },
+        ],
       },
-    );
+    ];
+    const options = {
+      headers: {
+        'Api-Key': `${process.env.NR_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    };
+    needle.post(path, data, options, (err, resp) => {
+      if (err) {
+        console.log('Metric API err:', err);
+      }
+    });
   };
 }
