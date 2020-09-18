@@ -1,3 +1,4 @@
+import 'newrelic';
 import express, { Application } from 'express';
 
 import { globalResponseHeaders } from './config';

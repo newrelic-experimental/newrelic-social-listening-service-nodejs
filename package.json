@@ -42,6 +42,7 @@
     "inversify-express-utils": "^6.3.2",
     "natural": "^2.1.5",
     "needle": "^2.5.0",
+    "newrelic": "^6.13.0",
     "nock": "^13.0.4",
     "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13",
