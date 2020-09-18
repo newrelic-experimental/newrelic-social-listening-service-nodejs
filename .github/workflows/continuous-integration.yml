@@ -30,3 +30,6 @@ jobs:
           TWITTER_BEARER_TOKEN: 'FakeTokenABCD'
           TWITTER_RULES_URL: 'https://api.twitter.com/2/tweets/search/stream/rules'
           TWITTER_STREAM_URL: 'https://api.twitter.com/2/tweets/search/stream'
+          NR_API_KEY: 'fakeNewRelicApiKeyABCD'
+          NR_METRIC_HOST: 'metric-api.eu.newrelic.com'
+          NR_METRIC_PATH: '/metric/v1'
