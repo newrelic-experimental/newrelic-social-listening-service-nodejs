@@ -1,45 +1,52 @@
 import { NewRelicMetricClient, SentimentMetricArgs } from './MetricClient';
-import { MetricClient } from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
+import needle from 'needle';
 
 describe('New Relic Metric Client', () => {
   let metricClient: NewRelicMetricClient;
+  let needlePostSpy: jest.Mocked<any>;
 
   beforeEach(() => {
+    needlePostSpy = needle.post = jest.fn().mockImplementation(() => jest.fn());
     metricClient = new NewRelicMetricClient();
   });
 
-  it('initialises NR MetricClient', () => {
-    expect(metricClient.client).toBeInstanceOf(MetricClient);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('creates and sends MetricBatch', () => {
-    const sendMock = (MetricClient.prototype.send = jest.fn());
-
+  it('creates and sends metrics object to newrelic', () => {
     const args: SentimentMetricArgs = {
       name: 'sentiment',
       value: 1.5,
-      attrs: {},
+      attrs: { platform: 'twitter' },
       timestamp: Date.now(),
     };
     metricClient.sendMetric(args);
 
-    expect(sendMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        common: {
-          attributes: {},
-          'interval.ms': undefined,
-          timestamp: expect.any(Number),
-        },
+    const expectedPath = `https://${process.env.NR_METRIC_HOST}${process.env.NR_METRIC_PATH}`;
+    const expectedData = [
+      {
         metrics: [
           {
-            'interval.ms': undefined,
+            attributes: { platform: 'twitter' },
             name: 'sentiment',
             timestamp: expect.any(Number),
-            type: 'gauge',
             value: 1.5,
           },
         ],
-      }),
+      },
+    ];
+    const expectedOptions = {
+      headers: {
+        'Api-Key': process.env.NR_API_KEY,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    expect(needlePostSpy).toHaveBeenCalledWith(
+      expectedPath,
+      expectedData,
+      expectedOptions,
       expect.any(Function),
     );
   });
