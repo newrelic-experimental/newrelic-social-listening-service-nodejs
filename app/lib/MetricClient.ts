@@ -1,27 +1,15 @@
-import { MetricClient } from '@newrelic/telemetry-sdk/dist/src/telemetry/metrics';
-import needle from 'needle';
-import { AttributeMap } from '@newrelic/telemetry-sdk/dist/src/telemetry/attributeMap';
-// import { IncomingMessage } from 'http';
+import needle, { NeedleResponse } from 'needle';
 import { injectable } from 'inversify';
 
 export type SentimentMetricArgs = {
   name: string;
   value: number;
-  attrs?: AttributeMap;
+  attrs?: { [key: string]: string };
   timestamp?: number;
 };
 
 @injectable()
 export class NewRelicMetricClient {
-  public client: MetricClient;
-
-  constructor() {
-    this.client = new MetricClient({
-      apiKey: process.env.NR_API_KEY as string,
-      host: process.env.NR_METRIC_HOST as string,
-    });
-  }
-
   sendMetric = (args: SentimentMetricArgs): void => {
     const { name, value, attrs, timestamp } = args;
 
@@ -44,10 +32,15 @@ export class NewRelicMetricClient {
         'Content-Type': 'application/json',
       },
     };
-    needle.post(path, data, options, (err, resp) => {
-      if (err) {
-        console.log('Metric API err:', err);
-      }
-    });
+    needle.post(
+      path,
+      data,
+      options,
+      (err: Error | null, resp: NeedleResponse) => {
+        if (err) {
+          console.log('Metric API err:', err);
+        }
+      },
+    );
   };
 }

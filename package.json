@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/newrelic-experimental/newrelic-social-listening-service-nodejs#readme",
   "dependencies": {
-    "@newrelic/telemetry-sdk": "^0.2.0",
     "apos-to-lex-form": "^1.0.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
