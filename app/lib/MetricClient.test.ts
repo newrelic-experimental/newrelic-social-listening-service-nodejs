@@ -3,7 +3,7 @@ import needle from 'needle';
 
 describe('New Relic Metric Client', () => {
   let metricClient: NewRelicMetricClient;
-  let needlePostSpy;
+  let needlePostSpy: jest.Mocked<any>;
 
   beforeEach(() => {
     needlePostSpy = needle.post = jest.fn();

@@ -1,4 +1,4 @@
-import needle, { NeedleResponse } from 'needle';
+import needle from 'needle';
 import { injectable } from 'inversify';
 
 export type SentimentMetricArgs = {
@@ -32,15 +32,10 @@ export class NewRelicMetricClient {
         'Content-Type': 'application/json',
       },
     };
-    needle.post(
-      path,
-      data,
-      options,
-      (err: Error | null, resp: NeedleResponse) => {
-        if (err) {
-          console.log('Metric API err:', err);
-        }
-      },
-    );
+    needle.post(path, data, options, (err: Error | null) => {
+      if (err) {
+        console.log('Metric API err:', err);
+      }
+    });
   };
 }
