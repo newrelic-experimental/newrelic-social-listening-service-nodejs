@@ -6,8 +6,12 @@ describe('New Relic Metric Client', () => {
   let needlePostSpy: jest.Mocked<any>;
 
   beforeEach(() => {
-    needlePostSpy = needle.post = jest.fn();
+    needlePostSpy = needle.post = jest.fn().mockImplementation(() => jest.fn());
     metricClient = new NewRelicMetricClient();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('creates and sends metrics object to newrelic', () => {
