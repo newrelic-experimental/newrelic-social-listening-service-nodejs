@@ -9,7 +9,7 @@
     "rootDir": "app",
     "strict": true,
     "sourceMap": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "noImplicitReturns": true,
     "resolveJsonModule": true,
