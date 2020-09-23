@@ -6,7 +6,7 @@ RUN npm install pm2@latest --global --quiet
 # create directory for the container
 WORKDIR /home/nodejs
 
-# only all files to work dir
+# copy all files to work dir
 COPY . .
 
 # install packages

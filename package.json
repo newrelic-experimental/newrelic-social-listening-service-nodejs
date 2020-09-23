@@ -9,7 +9,7 @@
     "docker:dev:stop": "docker-compose down",
     "build": "rimraf ./build && tsc",
     "copy-files": "copyfiles ./pm2/*.json ./build",
-    "start": "npm run build && npm run copy-files && pm2 start build/pm2/pm2.json",
+    "start": "npm run build && npm run copy-files && pm2-runtime build/pm2/pm2.json",
     "lint": "eslint '*/**/*.{js,ts}'",
     "lint:fix": "eslint '*/**/*.{js,ts}' --fix",
     "prettier": "prettier --config .prettierrc.js 'app/**/*.{js,ts}' --check",
