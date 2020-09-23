@@ -1,6 +1,6 @@
 {
   "name": "newrelic-social-listening-service-nodejs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Social media platform sentiment listening service",
   "main": "index.js",
   "scripts": {
