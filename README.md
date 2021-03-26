@@ -114,10 +114,10 @@ And it's a standard response from Twitter Streaming API indicating which rules w
 #### Start Twitter stream
 
 When you're happy with the rules, you can start streaming.
-Send a POST request to the following endpoint:
+Send a GET request to the following endpoint:
 
 ```text
-POST http://{host}/twitter/stream
+GET http://{host}/twitter/stream
 ```
 
 This will trigger a request to Twitter Streaming API and the app starts listen to tweets matching the your rules.
